@@ -1,5 +1,5 @@
 import java.util.*;
-import edu.princeton.cs.algs4.MinPQ;
+//import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
@@ -11,7 +11,7 @@ public class Board {
     private int blockNumber;
     private int hammingCount;
     private int manhattanCount;
-    private final ArrayList<Board> neighbors = new ArrayList<Board>();
+    //private final ArrayList<Board> neighbors = new ArrayList<Board>();
     
     private int tileNumber(int i, int j) {
         return (i*N) + j;
@@ -39,6 +39,8 @@ public class Board {
             }
         }
     }
+    
+    //private locateBlankTile
     
     public Board(int[][] blocks) {
         this.blocks = blocks; 
@@ -97,7 +99,7 @@ public class Board {
         int i2 = StdRandom.uniform(0,N);
         int j2 = StdRandom.uniform(0,N);
         if (twinBlocks[i][j] == 0 || twinBlocks[i2][j2] == 0) {
-            return twin();
+            twin();
         }
         else {
             int temp = twinBlocks[i][j];
@@ -130,8 +132,63 @@ public class Board {
     }
     
     public Iterable<Board> neighbors() {
-        ArrayList<Board> neighborsCopy = new ArrayList<Board>(neighbors);
-        return neighborsCopy;
+        int zeroIndexI = 0;
+        int zeroIndexJ = 0;
+        boolean foundZero = false;
+        ArrayList<Board> neighbors = new ArrayList<Board>(); //change to stack?
+        for (int i = 0; i < N; i++) {
+            for (int i = 0; i< N; i++) {
+                if (this.blocks[i][j] == 0) {
+                    zeroIndexI = i;
+                    zeroIndexJ = j;
+                    break;
+                }                                                
+            }
+            if (foundZero == true) {
+                break;
+            }
+        }
+        
+        if (zeroIndexI > 0) {
+            int[][] neighbor1  = new int[N][N];
+            copyBlocks(this.blocks, neighbor1);
+            exchangeTiles(neighbor1, zeroIndexI, zeroIndexJ, zeroIndexI-1, zeroIndexJ);
+            Board neighboringBoard1 = new Board(neighbor1);
+            neighbors.add(neighbor1);
+        }
+        
+        if (zeroIndexI < N-1) {
+            int[][] neighbor2 = new int[N][N];
+            copyBlocks(this.blocks, neighbor2);
+            exchangeTiles(neighbor2, zeroIndexI, zeroIndexJ, zeroIndexI+1, zeroIndexJ);
+            Board neighboringBoard2 = new Board(neighbor2);
+            neighbors.add(neighbor2);
+        }
+        
+        if (zeroIndexJ > 0) {
+            int[][] neighbor3 = new int[N][N];
+            copyBlocks(this.blocks, neighbor3);
+            exhangTiles(neighbor3, zeroIndexI, zeroIndexJ, zeroIndexI, zeroIndexJ-1);
+            Board neighboringBoard3 = new Board(neighbor3);
+            neighbors.add(neighbor3);
+        }
+        
+        if (zeroIndexJ < N-1) {
+            int[][] neighbor4 = new int[N][N];
+            copyBlocks(this.blocks, neighbor4);
+            exchangeTiles(neighbor4, zeroIndexI, zeroIndexJ, zeroIndexI, zeroIndexJ+1);
+            Board neighboringBoard4 = new Board(neighbor4);
+            neighbors.add(neighbor4);
+        }
+        //ArrayList<Board> neighborsCopy = new ArrayList<Board>(neighbors);
+        return neighbors;
+    }
+    
+    private void exchangeTiles(int[][] arr, int i1, int j1, int i2, int j2) {
+        int temp = arr[i1][j1];
+        arr[i1][j1] = arr[i2][j2];
+        arr[i2][j2] = temp;
+        //temp = null;
     }
     
     public String toString() {
