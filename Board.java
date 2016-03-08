@@ -137,7 +137,7 @@ public class Board {
         boolean foundZero = false;
         ArrayList<Board> neighbors = new ArrayList<Board>(); //change to stack?
         for (int i = 0; i < N; i++) {
-            for (int i = 0; i< N; i++) {
+            for (int j = 0; j< N; j++) {
                 if (this.blocks[i][j] == 0) {
                     zeroIndexI = i;
                     zeroIndexJ = j;
@@ -154,7 +154,7 @@ public class Board {
             copyBlocks(this.blocks, neighbor1);
             exchangeTiles(neighbor1, zeroIndexI, zeroIndexJ, zeroIndexI-1, zeroIndexJ);
             Board neighboringBoard1 = new Board(neighbor1);
-            neighbors.add(neighbor1);
+            neighbors.add(neighboringBoard1);
         }
         
         if (zeroIndexI < N-1) {
@@ -162,15 +162,15 @@ public class Board {
             copyBlocks(this.blocks, neighbor2);
             exchangeTiles(neighbor2, zeroIndexI, zeroIndexJ, zeroIndexI+1, zeroIndexJ);
             Board neighboringBoard2 = new Board(neighbor2);
-            neighbors.add(neighbor2);
+            neighbors.add(neighboringBoard2);
         }
         
         if (zeroIndexJ > 0) {
             int[][] neighbor3 = new int[N][N];
             copyBlocks(this.blocks, neighbor3);
-            exhangTiles(neighbor3, zeroIndexI, zeroIndexJ, zeroIndexI, zeroIndexJ-1);
+            exchangeTiles(neighbor3, zeroIndexI, zeroIndexJ, zeroIndexI, zeroIndexJ-1);
             Board neighboringBoard3 = new Board(neighbor3);
-            neighbors.add(neighbor3);
+            neighbors.add(neighboringBoard3);
         }
         
         if (zeroIndexJ < N-1) {
@@ -178,7 +178,7 @@ public class Board {
             copyBlocks(this.blocks, neighbor4);
             exchangeTiles(neighbor4, zeroIndexI, zeroIndexJ, zeroIndexI, zeroIndexJ+1);
             Board neighboringBoard4 = new Board(neighbor4);
-            neighbors.add(neighbor4);
+            neighbors.add(neighboringBoard4);
         }
         //ArrayList<Board> neighborsCopy = new ArrayList<Board>(neighbors);
         return neighbors;
