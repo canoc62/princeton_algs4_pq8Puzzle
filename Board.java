@@ -102,9 +102,10 @@ public class Board {
             twin();
         }
         else {
-            int temp = twinBlocks[i][j];
-            twinBlocks[i][j] = twinBlocks[i2][j2];
-            twinBlocks[i2][j2] = temp;
+            //int temp = twinBlocks[i][j];
+            //twinBlocks[i][j] = twinBlocks[i2][j2];
+            //twinBlocks[i2][j2] = temp;
+            exchangeTiles(twinBlocks, i, j, i2, j2);
         }
         Board twinBoard = new Board(twinBlocks);
         return twinBoard; 
@@ -120,14 +121,6 @@ public class Board {
         if (this.hamming() != that.hamming()) return false;
         if (this.manhattan() != that.manhattan()) return false;
         if (!Arrays.deepEquals(this.blocks,that.blocks)) return false;
-        /*for (int i = 0; i < N; i++) {
-         for (int j = 0; j < N; j++) {
-         if (this[i][j] != that[i][j]) {
-         return false;
-         }
-         }
-         }*/
-        //if (this.twin() != that.twin()) return false;
         return true;
     }
     
@@ -141,6 +134,7 @@ public class Board {
                 if (this.blocks[i][j] == 0) {
                     zeroIndexI = i;
                     zeroIndexJ = j;
+                    foundZero = true;
                     break;
                 }                                                
             }

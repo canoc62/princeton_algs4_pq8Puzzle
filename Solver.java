@@ -4,27 +4,55 @@ import java.util.*;
 
 public class Solver {
    
-    private class Node {
+    private Node initialNode;
+    private Node min;
+    public boolean isSolvable = true;
+    private int moves = 0;
+    private MinPQ<Node> search = new MinPQ<Node>();
+    private ArrayList<Board> solution = new ArrayList<Board>();
+    
+    private class Node implements Comparable<Node> {
         private Board board;
         private int moves;
+        private int priority;
         private Node previous;
+        
+        private Node(Board board, Node previousNode) {
+            this.board = board;
+            previous = previousNode;
+            if (previousNode != null) {
+                moves = previousNode.moves + 1;
+            }
+            else {
+                moves = 0;
+            }
+            priority = this.board.manhattan() + moves;
+        }
+        
+        public int compareTo(Node otherNode) {
+            if (this.priority > otherNode.priority) {
+                return 1;
+            }
+            else if (this.priority < otherNode.priority) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+        }                                                                    
     }
-    
-    private Node initialNode = new Node();
-    private int moves = 0;
-    private MinPQ solution = new MinPQ();
     
     public Solver(Board initial) {
         if (initial == null) {
             throw new NullPointerException();
         }
-        initialNode.board = initial;
-        initialNode.moves = 0;
-        initialNode.previous = null;
+        initialNode = new Node(initial, null);
+        moves = initialNode.moves;
+        
     }
     
     public boolean isSolvable() {
-        return true;
+        return isSolvable;
     }
     
     public int moves() {
@@ -34,11 +62,32 @@ public class Solver {
     
     public Iterable<Board> solution() {
         //Insert initial search node into PQ
-        Node initial = new Node();
-        solution.insert(initialNode);
-        //Delete node with min priority from PQ (sooo least manhattanCount?)
-        //Insert into PQ all neighboring search nodes
-        //Repeat until search node dequeued corresponds to a goal board
+        //Node curr = initialNode;
+        search.insert(initialNode);
+        //boolean goalNotReached = true;
+        
+        while (true) {
+            
+            //min = search.min(); //also will be the previous search node
+            
+            //Delete node with min priority from PQ
+            
+            min = search.delMin();
+            moves = min.moves;
+            solution.add(min.board);
+            
+            if (min.board.isGoal()) {
+                break;//goalNotReached = false;
+            }
+            
+            //Insert into PQ all neighboring search nodes
+            for (Board neighborBoard : min.board.neighbors()) { 
+                if (!neighborBoard.equals(min.previous.board)) {
+                    Node searchNode = new Node(neighborBoard, min);
+                    search.insert(searchNode);   
+                }
+            }
+        }
         return solution;
     }
     
