@@ -2,6 +2,7 @@ import java.util.*;
 //import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.*;
 
 public class Board {
     
@@ -14,15 +15,18 @@ public class Board {
     //private final ArrayList<Board> neighbors = new ArrayList<Board>();
     
     private int tileNumber(int i, int j) {
-        return (i*N) + j;
+        //Add one to adjust for fact that the goal tile numbers start at 1 instead of 0
+        return (i*N) + j + 1;
     }
     
     private int computeManhattanI(int tileNum){
-        return tileNum/N;
+        //Subtract one to adjust for fact that the goal tile numbers start at 1 instead of 0
+        return (tileNum-1)/N;
     }
     
     private int computeManhattanJ(int tileNum) {
-        int manhattanJ = tileNum - (computeManhattanI(tileNum)*N);
+        //Subtract one to adjust for fact that the goal tile numbers start at 1 instead of 0
+        int manhattanJ = tileNum - (computeManhattanI(tileNum)*N) - 1;
         return manhattanJ; 
     }
     
@@ -32,21 +36,24 @@ public class Board {
         return iDifference + jDifference;
     }
     
-    private void copyBlocks(int[][] blocks, int[][] twin) {
+    private int[][] copyBlocks(int[][] blocks) {//, int[][] twin) {
+        int[][] copy = new int[blocks.length][blocks.length];
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                twin[i][j] = blocks[i][j];
+                copy[i][j] = blocks[i][j];
             }
         }
+        return copy;
     }
     
     //private locateBlankTile
     
     public Board(int[][] blocks) {
         this.blocks = blocks; 
-        N = this.blocks[1].length;
-        twinBlocks = new int[N][N];
-        copyBlocks(this.blocks, twinBlocks);
+        this.N = this.blocks.length;//this.blocks[1].length;
+        //twinBlocks = new int[N][N];
+        //copyBlocks(this.blocks, twinBlocks);
+        int[][] twinBlocks = copyBlocks(this.blocks);
     }
     
     public int dimension() {
@@ -56,10 +63,10 @@ public class Board {
     public int hamming() {
         hammingCount = 0;
         
-        for (int i = 1; i < N; i++) {
-            for (int j = 1; j < N; j++) {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
                 if(this.blocks[i][j] != tileNumber(i,j)) {
-                    hammingCount++;
+                    if (this.blocks[i][j] != 0) hammingCount++;
                 }
             }
         }
@@ -81,14 +88,15 @@ public class Board {
     }
     
     public boolean isGoal() {
-        for (int i = 1; i < N; i++) {
-            for (int j = 1; j < N; j++) {
+       /* for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
                 if(this.blocks[i][j] != tileNumber(i,j)) {
                     return false;
                 }
             }
         }
-        return true;
+        return true;*/
+        return hamming() == 0;
     }
     
     public Board twin() {
@@ -144,35 +152,39 @@ public class Board {
         }
         
         if (zeroIndexI > 0) {
-            int[][] neighbor1  = new int[N][N];
-            copyBlocks(this.blocks, neighbor1);
+           // int[][] neighbor1  = new int[N][N];
+            int[][] neighbor1 = copyBlocks(this.blocks);//, neighbor1);
             exchangeTiles(neighbor1, zeroIndexI, zeroIndexJ, zeroIndexI-1, zeroIndexJ);
             Board neighboringBoard1 = new Board(neighbor1);
             neighbors.add(neighboringBoard1);
+           // neighbor1 = null;
         }
         
         if (zeroIndexI < N-1) {
-            int[][] neighbor2 = new int[N][N];
-            copyBlocks(this.blocks, neighbor2);
+            //int[][] neighbor2 = new int[N][N];
+            int[][] neighbor2 = copyBlocks(this.blocks);//, neighbor2);
             exchangeTiles(neighbor2, zeroIndexI, zeroIndexJ, zeroIndexI+1, zeroIndexJ);
             Board neighboringBoard2 = new Board(neighbor2);
             neighbors.add(neighboringBoard2);
+            //neighbor2 = null;
         }
         
         if (zeroIndexJ > 0) {
-            int[][] neighbor3 = new int[N][N];
-            copyBlocks(this.blocks, neighbor3);
+            //int[][] neighbor3 = new int[N][N];
+            int[][] neighbor3 = copyBlocks(this.blocks);//, neighbor3);
             exchangeTiles(neighbor3, zeroIndexI, zeroIndexJ, zeroIndexI, zeroIndexJ-1);
             Board neighboringBoard3 = new Board(neighbor3);
             neighbors.add(neighboringBoard3);
+            //neighbor3 = null;
         }
         
         if (zeroIndexJ < N-1) {
-            int[][] neighbor4 = new int[N][N];
-            copyBlocks(this.blocks, neighbor4);
+            //int[][] neighbor4 = new int[N][N];
+            int[][] neighbor4 = copyBlocks(this.blocks);//, neighbor4);
             exchangeTiles(neighbor4, zeroIndexI, zeroIndexJ, zeroIndexI, zeroIndexJ+1);
             Board neighboringBoard4 = new Board(neighbor4);
             neighbors.add(neighboringBoard4);
+            //neighbor4 = null;
         }
         //ArrayList<Board> neighborsCopy = new ArrayList<Board>(neighbors);
         return neighbors;
@@ -200,7 +212,23 @@ public class Board {
     
     
     public static void main(String[] args) {
+        In in = new In(args[0]);
+        int N = in.readInt();
+        int[][] blocks = new int[N][N];
+        /*System.out.println("Blocks: ");
+        for (int i =0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                System.out.println(boardBlocks[i][j]);
+            }
+        }*/
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+            blocks[i][j] = in.readInt();
         
+        Board board = new Board(blocks);
+        System.out.println("blocks length: "+ blocks.length);
+        System.out.println("hamming: " + board.hamming());
+        System.out.println("manhattan: " + board.manhattan());
     }
     
     
