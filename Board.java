@@ -100,8 +100,8 @@ public class Board {
     }
     
     public Board twin() {
-        //twin = new int[N][N];
-        //copyBoard(board, twin);
+        twinBlocks = copyBlocks(this.blocks);
+       
         int i = StdRandom.uniform(0,N);
         int j = StdRandom.uniform(0,N);
         int i2 = StdRandom.uniform(0,N);

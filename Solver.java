@@ -7,13 +7,14 @@ public class Solver {
    
     //private Node initialNode;
     //private Node initialTwinNode;
-    private Node min;
-    private Node twinMin;//might not need?
-    public boolean isSolvable = true;
-    //private int moves = 0;
+    //private Node min;
+    //private Node twinMin;//might not need?
+    private boolean isSolvable = true;
+    private int moves = 0;
     private MinPQ<Node> search = new MinPQ<Node>();
     //private ArrayList<Board> solution = new ArrayList<Board>();
     //private Stack<Board> solution = new Stack<Board>();
+    private Stack<Board> solution;
     
     private class Node implements Comparable<Node> {
         private Board board;
@@ -34,16 +35,15 @@ public class Solver {
         }
         
         public int compareTo(Node otherNode) {
-            if (this.priority > otherNode.priority) {
-                return 1;
+            if (this.priority > otherNode.priority) return 1;
+            else if (this.priority < otherNode.priority) return -1;
+            else {//if (this.priority == otherNode.priority) {
+                if (this.board.hamming() > otherNode.board.hamming()) return 1;
+                else if (this.board.hamming() < otherNode.board.hamming()) return -1;
+                else return 0;
             }
-            else if (this.priority < otherNode.priority) {
-                return -1;
-            }
-            else {
-                return 0;
-            }
-        }                                                                    
+        }
+                                                                            
     }
     
     public Solver(Board initial) {
@@ -53,14 +53,44 @@ public class Solver {
         //min = new Node(initial, null);
         Node initialNode = new Node(initial, null);
         search.insert(initialNode);
-        //initialTwinNode = new Node(initial.twin(), null);
+        Node initialTwinNode = new Node(initial.twin(), null);
+        search.insert(initialTwinNode);
+     
+       // Node twinMin;
+        Node min;
         
         while (true) {
-            min = search.delMin();
+            //moves++;
+            //twinMin = search.delMin();
+           // twinMin = search.delMin();
+            
+            min = search.delMin();//search.delMin();
            // solution.add(min.board);
+            /*if (twinMin.board.isGoal()) {
+                isSolvable = false;
+                break;
+            }*/
+            moves = min.moves;
             if (min.board.isGoal()) {
+                //isSolvable = false;
+                solution = new Stack<Board>();
+                while (min != null) {
+                    solution.push(min.board);
+                    //if (min.previous == null) {
+                        if (min.board == initialTwinNode.board) {
+                            isSolvable = false;
+                        }
+                   // }
+                    min = min.previous;
+                }
+                //moves = min.moves;
                 break;
             }
+            
+             /*if (twinMin.board.isGoal()) {
+                isSolvable = false;
+                break;
+            }*/
             
             for (Board neighborBoard : min.board.neighbors()) { 
                 if (min.previous == null || !neighborBoard.equals(min.previous.board)) {
@@ -69,14 +99,22 @@ public class Solver {
                 }
             }
             
+            //twinMin = search.delMin();
+            
+            /*if (twinMin.board.isGoal()) {
+                isSolvable = false;
+                break;
+            }*/
+            
             //min = search.delMin();
             
-            /* for (Board twinNeighborBoard : twinMin.board.neighbors()) {
-             if (twinMin.previous == null || !twinNeighborBoard.equals(twinMin.previous.board)) {
-             Node twinSearchNode = new Node(twinNeighborBoard, twinMin);
-             search.insert(twinSearchNode);   
-             }
-             }*/
+            /*for (Board twinNeighborBoard : twinMin.board.neighbors()) {
+                if (twinMin.previous == null || !twinNeighborBoard.equals(twinMin.previous.board)) {
+                    Node twinSearchNode = new Node(twinNeighborBoard, twinMin);
+                    search.insert(twinSearchNode);   
+                }
+            }*/
+            //moves = min.moves;
         }
         
     }
@@ -88,15 +126,18 @@ public class Solver {
     
     public int moves() {
         if (!isSolvable()) return -1;
-        return min.moves;
+        return moves;//min.moves;
     }
     
     public Iterable<Board> solution() {
-        Stack<Board> solution = new Stack<Board>();
+        /*Stack<Board> solution = new Stack<Board>();
         while (min != null) {
             solution.push(min.board);
+            if (min.board == initialTwinNode.board) {
+                isSolvable = false;
+            }
             min = min.previous;
-        }
+        }*/
         return solution;
     }
     
