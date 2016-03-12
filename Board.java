@@ -1,6 +1,4 @@
 import java.util.*;
-import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.*;
 
 public class Board {
@@ -55,22 +53,14 @@ public class Board {
     
     public Board twin() {
         int[][] twinBlocks = copyBlocks(this.blocks);
-       
-        int i = StdRandom.uniform(N);
-        int j = StdRandom.uniform(N);
-        int i2 = StdRandom.uniform(N);
-        int j2 = StdRandom.uniform(N);
         
-        if (i == i2 && j == j2) {
-            return twin();
-        }
-        if (twinBlocks[i][j] != 0 && twinBlocks[i][j] != 0) {
-            exchangeTiles(twinBlocks, i, j, i2, j2);
-        }
-        else {
-            return twin();
-        }
+        int i = 0, j = 0, i2 = 1, j2 = 1;
+        if (twinBlocks[i][j] == 0) j++;
+        if (twinBlocks[i2][j2] == 0) j2--;
+       
+        exchangeTiles(twinBlocks, i, j, i2, j2);
         Board twinBoard = new Board(twinBlocks);
+        
         return twinBoard; 
     }
     
